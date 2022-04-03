@@ -1,18 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { fetchCurrenciesAPI } from '../actions';
 
 class Wallet extends React.Component {
+  async componentDidMount() {
+    const { fetchAPIDispatch } = this.props;
+    await fetchAPIDispatch();
+  }
+
   render() {
-    const { user } = this.props;
-    console.log(user);
+    const { user, currencies } = this.props;
     return (
       <div>
         <div>TrybeWallet</div>
         <div>
           <header data-testid="email-field">{ user }</header>
           <span data-testid="total-field">0</span>
-          <span data-testid="header-currency-field">BRL</span>
+          <span data-testid="header-currency-field">{ currencies }</span>
         </div>
       </div>
     );
@@ -21,9 +26,15 @@ class Wallet extends React.Component {
 
 const mapStateToProps = (state) => ({
   user: state.user.email,
+  currencies: state.wallet.currencies,
 });
+
 Wallet.propTypes = {
   user: PropTypes.string,
 }.isRequired;
 
-export default connect(mapStateToProps, null)(Wallet);
+const mapDispatchToProps = (dispatch) => ({
+  fetchAPIDispatch: () => dispatch(fetchCurrenciesAPI()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Wallet);

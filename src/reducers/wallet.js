@@ -1,10 +1,8 @@
-import { ADDITIONAL_CURRENCIES } from '../actions';
+import { ADDITIONAL_CURRENCIES, ADDITIONAL_EXPENSES } from '../actions';
 
 const INITIAL_STATE = {
-  wallet: {
-    currencies: [],
-    expenses: [],
-  },
+  currencies: [],
+  expenses: [],
 };
 
 function wallet(state = INITIAL_STATE, action) {
@@ -13,6 +11,11 @@ function wallet(state = INITIAL_STATE, action) {
     return {
       ...state,
       currencies: action.currencies,
+    };
+  case ADDITIONAL_EXPENSES:
+    return {
+      ...state,
+      expenses: state.expenses.concat(action.expenses),
     };
   default:
     return state;

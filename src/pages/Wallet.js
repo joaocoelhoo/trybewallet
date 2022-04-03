@@ -9,6 +9,16 @@ class Wallet extends React.Component {
     await fetchAPIDispatch();
   }
 
+  currenciesOptions = () => {
+    const { currencies } = this.props;
+    const options = currencies && currencies
+      .map((currency, index) => (
+        <option key={ index } value={ currency }>
+          { currency }
+        </option>));
+    return options;
+  }
+
   render() {
     const { user, currencies } = this.props;
     return (
@@ -19,6 +29,34 @@ class Wallet extends React.Component {
           <span data-testid="total-field">0</span>
           <span data-testid="header-currency-field">{ currencies }</span>
         </div>
+        <form>
+          <input data-testid="value-input" type="number" />
+          <label htmlFor="currency">
+            Moeda
+            <select data-testid="currency-input" id="currency">
+              { this.currenciesOptions() }
+            </select>
+          </label>
+          <label htmlFor="method">
+            Método de Pagamento
+            <select data-testid="method-input" id="method">
+              <option value="dinheiro">Dinheiro</option>
+              <option value="cartao-de-credito">Cartão de crédito</option>
+              <option value="cartao-de-debito">Cartão de débito</option>
+            </select>
+          </label>
+          <label htmlFor="tag">
+            <select data-testid="tag-input" id="tag">
+              <option value="alimentacao">Alimentação</option>
+              <option value="lazer">Lazer</option>
+              <option value="trabalho">Trabalho</option>
+              <option value="transporte">Transporte</option>
+              <option value="saude">Saúde</option>
+            </select>
+          </label>
+          <input data-testid="description-input" type="text" />
+
+        </form>
       </div>
     );
   }

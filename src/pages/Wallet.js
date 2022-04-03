@@ -46,6 +46,26 @@ class Wallet extends React.Component {
     additionalExpensesDispatch(expense);
   }
 
+  tableColumns = () => {
+    const columnNames = [
+      'Descrição',
+      'Tag',
+      'Método de pagamento',
+      'Valor',
+      'Moeda',
+      'Câmbio utilizado',
+      'Valor convertido',
+      'Moeda de conversão',
+      'Editar/Excluir',
+    ];
+    const columnHeaders = columnNames
+      .map((name, index) => (
+        <th key={ index } role="columnheader" scope="col">{name}</th>
+      ));
+
+    return columnHeaders;
+  }
+
   render() {
     const { user } = this.props;
     return (
@@ -105,6 +125,14 @@ class Wallet extends React.Component {
           />
           <button type="submit" onClick={ this.addExpenses }>Adicionar despesa</button>
         </form>
+        <table>
+          <thead>
+            <tr role="row">
+              { this.tableColumns() }
+            </tr>
+          </thead>
+          <tbody />
+        </table>
       </div>
     );
   }

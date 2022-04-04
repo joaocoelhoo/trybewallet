@@ -8,10 +8,11 @@ class Wallet extends React.Component {
     super();
     this.state = {
       value: 0,
-      currency: 'USD',
-      method: 'dinheiro',
-      tag: 'alimentacao',
+      currency: '',
+      method: '',
+      tag: '',
       description: '',
+      total: 0,
     };
   }
 
@@ -34,7 +35,18 @@ class Wallet extends React.Component {
     this.setState({ [key]: target.value });
   };
 
-  addExpenses = async () => {
+  totalChange = () => {
+    const { expenses } = this.props;
+    let expensesResult = 0;
+    expenses.forEach((expense) => {
+      const { exchangeRates, currency } = expense;
+      expensesResult += expense.value * exchangeRates[currency].ask;
+    });
+    this.setState({ total: expensesResult.toFixed(2), value: 0 });
+  };
+
+  addExpenses = async (event) => {
+    event.preventDefault();
     const { additionalExpensesDispatch, fetchAPIDispatch, expenses } = this.props;
     const { value, currency, method, tag, description } = this.state;
     const exchangeRates = await fetchAPIDispatch();
@@ -42,8 +54,8 @@ class Wallet extends React.Component {
     const expense = {
       id, value, currency, method, tag, description, exchangeRates,
     };
-
     additionalExpensesDispatch(expense);
+    this.totalChange();
   }
 
   tableColumns = () => {
@@ -68,12 +80,14 @@ class Wallet extends React.Component {
 
   render() {
     const { user } = this.props;
+    const { total, value } = this.state;
+
     return (
       <div>
         <div>TrybeWallet</div>
         <div>
           <header data-testid="email-field">{ user }</header>
-          <span data-testid="total-field">0</span>
+          <span data-testid="total-field">{ total }</span>
           <span data-testid="header-currency-field">BRL</span>
         </div>
 
@@ -81,6 +95,7 @@ class Wallet extends React.Component {
           <input
             data-testid="value-input"
             type="number"
+            value={ value }
             onChange={ (event) => this.onInputChange(event, 'value') }
           />
           <label htmlFor="currency">
@@ -100,9 +115,9 @@ class Wallet extends React.Component {
               id="method"
               onChange={ (event) => this.onInputChange(event, 'method') }
             >
-              <option value="dinheiro">Dinheiro</option>
-              <option value="cartao-de-credito">Cartão de crédito</option>
-              <option value="cartao-de-debito">Cartão de débito</option>
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="Cartão de crédito">Cartão de crédito</option>
+              <option value="Cartão de débito">Cartão de débito</option>
             </select>
           </label>
           <label htmlFor="tag">
@@ -111,11 +126,11 @@ class Wallet extends React.Component {
               id="tag"
               onChange={ (event) => this.onInputChange(event, 'tag') }
             >
-              <option value="alimentacao">Alimentação</option>
-              <option value="lazer">Lazer</option>
-              <option value="trabalho">Trabalho</option>
-              <option value="transporte">Transporte</option>
-              <option value="saude">Saúde</option>
+              <option value="Alimentação">Alimentação</option>
+              <option value="Lazer">Lazer</option>
+              <option value="Trabalho">Trabalho</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Saúde">Saúde</option>
             </select>
           </label>
           <input

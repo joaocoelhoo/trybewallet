@@ -35,12 +35,16 @@ class Wallet extends React.Component {
     this.setState({ [key]: target.value });
   };
 
+  conversion = (expense) => {
+    const { exchangeRates, currency } = expense;
+    return expense.value * exchangeRates[currency].ask;
+  }
+
   totalChange = () => {
     const { expenses } = this.props;
     let expensesResult = 0;
     expenses.forEach((expense) => {
-      const { exchangeRates, currency } = expense;
-      expensesResult += expense.value * exchangeRates[currency].ask;
+      expensesResult += this.conversion(expense);
     });
     this.setState({ total: expensesResult.toFixed(2), value: 0 });
   };
@@ -76,6 +80,24 @@ class Wallet extends React.Component {
       ));
 
     return columnHeaders;
+  }
+
+  tableData = () => {
+    const { expenses } = this.props;
+    const mapRows = expenses.map((expense, index) => (
+      <tr key={ index }>
+        <td>{ expense.description }</td>
+        <td>{ expense.tag }</td>
+        <td>{ expense.method }</td>
+        <td>{ parseFloat(expense.value).toFixed(2) }</td>
+        <td>{ expense.exchangeRates[expense.currency].name.split('/')[0] }</td>
+        <td>{ parseFloat(expense.exchangeRates[expense.currency].ask).toFixed(2) }</td>
+        <td>{ this.conversion(expense).toFixed(2) }</td>
+        <td>Real</td>
+        <td />
+      </tr>
+    ));
+    return mapRows;
   }
 
   render() {
@@ -146,7 +168,9 @@ class Wallet extends React.Component {
               { this.tableColumns() }
             </tr>
           </thead>
-          <tbody />
+          <tbody>
+            { this.tableData() }
+          </tbody>
         </table>
       </div>
     );
